@@ -1,11 +1,22 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { LoginAuthDto } from './dto/login-auth.dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+  ) {}
   //===================Create User====================
   async create(payload: CreateAuthDto) {
     const { email, password } = payload;
@@ -63,5 +74,52 @@ export class AuthService {
       }
     }
     return newId;
+  }
+
+  //===================Login User====================
+  async loginUser(payload: LoginAuthDto) {
+    const { email, password } = payload;
+
+    //find user
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid Email or Password');
+    }
+
+    //verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid Email or Password');
+    }
+
+    const jwtPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    //generate access token
+    const accessToken = this.jwtService.sign(jwtPayload);
+
+    //generate refresh token
+    const refreshToken = this.jwtService.sign(jwtPayload, {
+      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      expiresIn: '7d',
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+      },
+    };
   }
 }

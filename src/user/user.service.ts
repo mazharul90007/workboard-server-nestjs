@@ -5,6 +5,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
+
+  //==============Get all User==================
   async findAll() {
     const users = await this.prisma.user.findMany({
       select: {

@@ -41,10 +41,10 @@ model Task {
   isDeleted    Boolean    @default(false)
   deletedAt    DateTime?
   completedAt  DateTime?
-  assignedById String?
-  assignedBy   User?      @relation("AssignedBy", fields: [assignedById], references: [id])
-  assignedToId String?
-  assignedTo   User?      @relation("AssignedTo", fields: [assignedToId], references: [id])
+  assignedById String
+  assignedBy   User       @relation("AssignedBy", fields: [assignedById], references: [id])
+  assignedToId String
+  assignedTo   User       @relation("AssignedTo", fields: [assignedToId], references: [id])
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 

@@ -43,6 +43,7 @@ export class UserService {
       this.prisma.user.findMany({
         where,
         skip,
+        take: l,
         select: {
           id: true,
           memberId: true,

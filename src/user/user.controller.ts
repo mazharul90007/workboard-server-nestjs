@@ -1,9 +1,11 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -15,8 +17,8 @@ import { UserRole } from 'src/generated/prisma/enums';
 import { UserFilterDto } from './dto/user-filter.dto';
 import { AuthUser } from './entities/user.entity';
 import { GetUser } from './decorators/get-user.decorator';
+import { UpdateUserDto } from './dto/update-user.dto';
 // import * as express from 'express';
-// import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -37,9 +39,11 @@ export class UserController {
     };
   }
 
-  //==============Get Single User==================
+  //================Get Single User==================
   @Get(':id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string, @GetUser() user: AuthUser) {
     const result = await this.userService.findOne(id, user);
 
@@ -50,10 +54,19 @@ export class UserController {
     };
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.update(+id, updateUserDto);
-  // }
+  //===================Update User==================
+  @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  async update(@Param('id') id: string, @Body() updateUserData: UpdateUserDto) {
+    const result = await this.userService.update(id, updateUserData);
+
+    return {
+      success: true,
+      message: 'User data updated successfully',
+      data: result,
+    };
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

@@ -3,11 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-// import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserFilterDto } from './dto/user-filter.dto';
 import { Prisma, UserRole } from 'src/generated/prisma/client';
 import { AuthUser } from './entities/user.entity';
+import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -115,9 +116,39 @@ export class UserService {
     return result;
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  //===================Update User==================
+  async update(id: string, updateUserData: UpdateUserDto) {
+    //check user
+    const existingUser = await this.prisma.user.findUnique({
+      where: { id },
+    });
+    if (!existingUser) {
+      throw new NotFoundException('User does not exist');
+    }
+
+    //Hash password
+    if (updateUserData.password) {
+      const hashPassword = await bcrypt.hash(updateUserData.password, 10);
+      updateUserData.password = hashPassword;
+    }
+
+    //Update data
+    const result = await this.prisma.user.update({
+      where: { id },
+      data: updateUserData,
+      select: {
+        id: true,
+        memberId: true,
+        email: true,
+        name: true,
+        phone: true,
+        role: true,
+        status: true,
+        updatedAt: true,
+      },
+    });
+    return result;
+  }
 
   // remove(id: number) {
   //   return `This action removes a #${id} user`;

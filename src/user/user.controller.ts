@@ -3,6 +3,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -10,6 +11,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/generated/prisma/enums';
+import { UserFilterDto } from './dto/user-filter.dto';
 // import * as express from 'express';
 // import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -22,8 +24,8 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
-  async findAll() {
-    const result = await this.userService.findAll();
+  async findAll(@Query() query: UserFilterDto) {
+    const result = await this.userService.findAll(query);
     return {
       success: true,
       message: 'All user data has been fetched successfully',

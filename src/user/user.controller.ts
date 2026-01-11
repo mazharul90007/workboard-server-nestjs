@@ -7,6 +7,9 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { UserRole } from 'src/generated/prisma/enums';
 // import * as express from 'express';
 // import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -15,8 +18,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   //==============Get all User==================
-  @UseGuards(AuthGuard('jwt'))
   @Get()
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   async findAll() {
     const result = await this.userService.findAll();

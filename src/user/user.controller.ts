@@ -3,6 +3,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -12,6 +13,8 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from 'src/generated/prisma/enums';
 import { UserFilterDto } from './dto/user-filter.dto';
+import { AuthUser } from './entities/user.entity';
+import { GetUser } from './decorators/get-user.decorator';
 // import * as express from 'express';
 // import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -29,14 +32,23 @@ export class UserController {
     return {
       success: true,
       message: 'All user data has been fetched successfully',
-      data: result,
+      meta: result.meta,
+      data: result.data,
     };
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(+id);
-  // }
+  //==============Get Single User==================
+  @Get(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  async findOne(@Param('id') id: string, @GetUser() user: AuthUser) {
+    const result = await this.userService.findOne(id, user);
+
+    return {
+      success: true,
+      message: 'User data fetched successfully',
+      data: result,
+    };
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

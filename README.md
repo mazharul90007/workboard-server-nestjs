@@ -13,9 +13,9 @@
 **WORK BOARD SERVER** - WORK BOARD SERVER is a full-featured backend API for a task management platform. The platform supports user and assigned task management using modern backend technologies.
 
 🌐 **Frontend Live URL:** [https://workboard-client.vercel.app](https://workboard-client.vercel.app)  
-🌐 **Backend Live URL:** [https://workboard-server.vercel.app](https://workboard-server.vercel.app)  
+🌐 **Backend Live URL:** [https://workboard-server-nestjs.onrender.com](https://workboard-server-nestjs.onrender.com)  
 🌐 **Frontend Github URL:** [https://github.com/mazharul90007/work-board-client](https://github.com/mazharul90007/work-board-client)  
-📚 **API Documentation:** [Postman Documentation](https://documenter.getpostman.com/view/40157327/2sB3dWsnQB)
+📚 **API Documentation:** [Postman Documentation](https://documenter.getpostman.com/view/40157327/2sBXVfkBth)
 
 ---
 

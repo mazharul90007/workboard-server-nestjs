@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { LoginAuthDto } from './dto/login-auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UserStatus } from 'src/generated/prisma/enums';
 
 @Injectable()
 export class AuthService {
@@ -19,21 +20,36 @@ export class AuthService {
   ) {}
   //===================Create User====================
   async create(payload: CreateAuthDto) {
-    const { email, password } = payload;
+    const { email, password, ...rest } = payload;
 
     //check exist user
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
 
+    //Hash Password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    //Condition 1, if User exist but status deleted
+    if (existingUser && existingUser.status === UserStatus.DELETED) {
+      return await this.prisma.user.update({
+        where: { email },
+        data: {
+          ...rest,
+          password: hashedPassword,
+          status: UserStatus.ACTIVE,
+        },
+      });
+    }
+
+    // Condition 2: if User exist but status blocked or active
     if (existingUser) {
       throw new ConflictException('User with this email already exist');
     }
-    //Hash Password
-    const hashedPassword = await bcrypt.hash(password, 10);
+
+    //Condition 3: New User with fresh Data
     //Generate a unique memberId
     const memberId = await this.generateUniqueMemberId();
-
     //Create or SignUp User
     const user = await this.prisma.user.create({
       data: {

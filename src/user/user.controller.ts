@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -68,8 +69,20 @@ export class UserController {
     };
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.userService.remove(+id);
-  // }
+  //===================Delete User==================
+  @Delete(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async removeUser(
+    @Param('id') targetId: string,
+    @GetUser('role') role: UserRole,
+  ) {
+    await this.userService.softDeleteUser(targetId, role);
+
+    return {
+      success: true,
+      message: 'User deleted Successfully',
+      data: null,
+    };
+  }
 }

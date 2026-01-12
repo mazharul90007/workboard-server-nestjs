@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserFilterDto } from './dto/user-filter.dto';
-import { Prisma, UserRole } from 'src/generated/prisma/client';
+import { Prisma, UserRole, UserStatus } from 'src/generated/prisma/client';
 import { AuthUser } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -151,7 +151,44 @@ export class UserService {
     return result;
   }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  //===================Delete User==================
+  async softDeleteUser(targetUserId: string, requesterRole: UserRole) {
+    //Strict Permission Check, Double check the role
+    if (
+      requesterRole !== UserRole.ADMIN &&
+      requesterRole !== UserRole.SUPER_ADMIN
+    ) {
+      throw new ForbiddenException('Only Administrators can delete user');
+    }
+
+    //verify request user
+    const user = await this.prisma.user.findUnique({
+      where: { id: targetUserId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found or already deleted');
+    }
+
+    //delete user and all the task related to that user
+    return await this.prisma.$transaction(async (tx) => {
+      //1. hard delete all task related to the user
+      const deleteTasks = await tx.task.deleteMany({
+        where: {
+          OR: [{ assignedToId: targetUserId }, { assignedById: targetUserId }],
+        },
+      });
+
+      //2. Update user status to DELETED
+      const updatedUser = await tx.user.update({
+        where: { id: targetUserId },
+        data: { status: UserStatus.DELETED },
+      });
+
+      return {
+        user: updatedUser,
+        deletedTasksCount: deleteTasks.count,
+      };
+    });
+  }
 }

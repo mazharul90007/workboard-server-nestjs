@@ -30,5 +30,5 @@ export class CreateTaskDto {
 
   @IsUUID()
   @IsNotEmpty()
-  assignedToId?: string;
+  assignedToId: string;
 }

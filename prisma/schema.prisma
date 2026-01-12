@@ -38,8 +38,6 @@ model Task {
   status       TaskStatus @default(TODO)
   priority     Priority   @default(MEDIUM)
   dueDate      DateTime?
-  isDeleted    Boolean    @default(false)
-  deletedAt    DateTime?
   completedAt  DateTime?
   assignedById String
   assignedBy   User       @relation("AssignedBy", fields: [assignedById], references: [id])
@@ -52,9 +50,8 @@ model Task {
   @@index([assignedById])
   @@index([status])
   @@index([priority])
-  @@index([isDeleted])
   @@index([dueDate])
-  @@index([assignedToId, isDeleted, status])
+  @@index([assignedToId, status])
   @@map("tasks")
 }
 

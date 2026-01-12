@@ -7,6 +7,7 @@ import {
   Query,
   Param,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -17,7 +18,7 @@ import { UserRole } from 'src/generated/prisma/enums';
 import { GetUser } from 'src/user/decorators/get-user.decorator';
 import { AuthUser } from 'src/user/entities/user.entity';
 import { TaskFilterDto } from './dto/task-filter.dto';
-// import { UpdateTaskDto } from './dto/update-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Controller('task')
 export class TaskController {
@@ -65,11 +66,25 @@ export class TaskController {
     };
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-  //   return this.taskService.update(+id, updateTaskDto);
-  // }
+  //==================Update Task by Id====================
+  @Patch(':id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.LEADER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async update(
+    @Param('id') taskId: string,
+    @Body() updateTaskDto: UpdateTaskDto,
+    @GetUser() user: AuthUser,
+  ) {
+    const result = await this.taskService.update(taskId, updateTaskDto, user);
 
+    return {
+      success: true,
+      message: 'Task updated successfully',
+      data: result,
+    };
+  }
+
+  //==================Delete Task by Id====================
   @Delete('delete/:id')
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.LEADER, UserRole.ADMIN, UserRole.SUPER_ADMIN)

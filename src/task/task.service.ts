@@ -9,7 +9,7 @@ import { AuthUser } from 'src/user/entities/user.entity';
 import { UserRole } from 'src/generated/prisma/enums';
 import { Prisma } from 'src/generated/prisma/client';
 import { TaskFilterDto } from './dto/task-filter.dto';
-// import { UpdateTaskDto } from './dto/update-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TaskService {
@@ -59,7 +59,7 @@ export class TaskService {
     const l = Number(limit) || 10;
     const skip = (p - 1) * l;
 
-    const andCondition: Prisma.TaskWhereInput[] = [{ isDeleted: false }];
+    const andCondition: Prisma.TaskWhereInput[] = [];
 
     //Apply conditon if user is not Admin or Super Admin
     const isAdmin = role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN;
@@ -142,7 +142,6 @@ export class TaskService {
     //define the security filter
     const whereCondition: Prisma.TaskWhereInput = {
       id: taskId,
-      isDeleted: false,
     };
 
     //if not admin then applying AssignedTo or AssignedBy restriction
@@ -180,10 +179,54 @@ export class TaskService {
     return task;
   }
 
-  // update(id: number, updateTaskDto: UpdateTaskDto) {
-  //   return `This action updates a #${id} task`;
-  // }
+  //==================Update Task by Id====================
 
+  async update(taskId: string, updateTaskDto: UpdateTaskDto, user: AuthUser) {
+    const { id: userId, role } = user;
+
+    //verify Task
+    const task = await this.prisma.task.findUnique({
+      where: { id: taskId },
+    });
+
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    //Permission Check
+    const isAdmin = role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN;
+    const isSelf = task.assignedById === userId;
+
+    if (!isAdmin && !isSelf) {
+      throw new ForbiddenException(
+        'You do not have permission to update this task',
+      );
+    }
+
+    //If assignedToId is being updated, verify new user exist
+    if (updateTaskDto.assignedToId) {
+      const targetUser = await this.prisma.user.findUnique({
+        where: { id: updateTaskDto.assignedToId },
+      });
+
+      if (!targetUser) {
+        throw new NotFoundException('The assigned user does not exist');
+      }
+    }
+
+    //Update Task
+    const result = await this.prisma.task.update({
+      where: { id: taskId },
+      data: updateTaskDto,
+      include: {
+        assignedTo: { select: { id: true, name: true, email: true } },
+        assignedBy: { select: { id: true, name: true, email: true } },
+      },
+    });
+    return result;
+  }
+
+  //==================Delete Task by Id====================
   async deleteTask(taskId: string, user: AuthUser) {
     const { id: userId, role } = user;
 

@@ -184,7 +184,33 @@ export class TaskService {
   //   return `This action updates a #${id} task`;
   // }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} task`;
-  // }
+  async deleteTask(taskId: string, user: AuthUser) {
+    const { id: userId, role } = user;
+
+    //check task
+    const task = await this.prisma.task.findUnique({
+      where: { id: taskId },
+    });
+
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    //Permission Check
+    const isAdmin = role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN;
+    const isSelf = task.assignedById === userId;
+
+    if (!isAdmin && !isSelf) {
+      throw new ForbiddenException(
+        'You do not have permission to permanently delete this task',
+      );
+    }
+
+    //hard delete task
+    const result = await this.prisma.task.delete({
+      where: { id: taskId },
+    });
+
+    return result;
+  }
 }

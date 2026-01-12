@@ -6,6 +6,7 @@ import {
   Get,
   Query,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -69,8 +70,16 @@ export class TaskController {
   //   return this.taskService.update(+id, updateTaskDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.taskService.remove(+id);
-  // }
+  @Delete('delete/:id')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles(UserRole.LEADER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  async deleteTask(@Param('id') taskId: string, @GetUser() user: AuthUser) {
+    await this.taskService.deleteTask(taskId, user);
+
+    return {
+      success: true,
+      message: 'Task has been permanently removed from the system',
+      data: null,
+    };
+  }
 }

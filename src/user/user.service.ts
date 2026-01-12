@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserFilterDto } from './dto/user-filter.dto';
-import { Prisma, UserRole, UserStatus } from 'src/generated/prisma/client';
+// import { Prisma, UserRole, UserStatus } from 'src/generated/prisma/client';
+import { Prisma, UserRole, UserStatus } from 'generated/prisma/client';
 import { AuthUser } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';

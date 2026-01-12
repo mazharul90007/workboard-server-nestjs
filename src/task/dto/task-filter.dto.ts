@@ -1,5 +1,6 @@
 import { IsEnum, IsNumberString, IsOptional, IsString } from 'class-validator';
-import { Priority, TaskStatus } from 'src/generated/prisma/enums';
+// import { Priority, TaskStatus } from 'src/generated/prisma/enums';
+import { Priority, TaskStatus } from 'generated/prisma/enums';
 
 export class TaskFilterDto {
   @IsOptional()

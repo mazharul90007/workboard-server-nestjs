@@ -14,11 +14,12 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { UserRole } from 'src/generated/prisma/enums';
+// import { UserRole } from 'src/generated/prisma/enums';
 import { GetUser } from 'src/user/decorators/get-user.decorator';
 import { AuthUser } from 'src/user/entities/user.entity';
 import { TaskFilterDto } from './dto/task-filter.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { UserRole } from 'generated/prisma/enums';
 
 @Controller('task')
 export class TaskController {

@@ -6,7 +6,8 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import { Priority, TaskStatus } from 'src/generated/prisma/enums';
+// import { Priority, TaskStatus } from 'src/generated/prisma/enums';
+import { Priority, TaskStatus } from 'generated/prisma/enums';
 
 export class CreateTaskDto {
   @IsString()

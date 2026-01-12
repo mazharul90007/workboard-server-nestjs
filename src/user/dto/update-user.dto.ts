@@ -5,7 +5,8 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
-import { UserRole, UserStatus } from 'src/generated/prisma/enums';
+// import { UserRole, UserStatus } from 'src/generated/prisma/enums';
+import { UserRole, UserStatus } from 'generated/prisma/enums';
 
 export class UpdateUserDto {
   @IsOptional()

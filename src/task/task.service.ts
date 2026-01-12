@@ -6,10 +6,12 @@ import {
 import { CreateTaskDto } from './dto/create-task.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthUser } from 'src/user/entities/user.entity';
-import { UserRole } from 'src/generated/prisma/enums';
-import { Prisma } from 'src/generated/prisma/client';
+// import { UserRole } from 'src/generated/prisma/enums';
+// import { Prisma } from 'src/generated/prisma/client';
 import { TaskFilterDto } from './dto/task-filter.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { Prisma } from 'generated/prisma/client';
+import { UserRole } from 'generated/prisma/enums';
 
 @Injectable()
 export class TaskService {

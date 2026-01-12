@@ -1,4 +1,12 @@
-import { Controller, Post, Body, UseGuards, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Query,
+  Param,
+} from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -43,10 +51,18 @@ export class TaskController {
     };
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.taskService.findOne(+id);
-  // }
+  //==================Get User related Task by Id====================
+  @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
+  async findOne(@Param('id') taskId: string, @GetUser() user: AuthUser) {
+    const result = await this.taskService.findOne(taskId, user);
+
+    return {
+      success: true,
+      message: 'Task fetched successfully',
+      data: result,
+    };
+  }
 
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthUser } from 'src/user/entities/user.entity';
@@ -128,9 +132,53 @@ export class TaskService {
     };
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} task`;
-  // }
+  //==================Get User related Task by Id====================
+  async findOne(taskId: string, user: AuthUser) {
+    const { id: userId, role } = user;
+
+    //check if user is an Admin
+    const isAdmin = role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN;
+
+    //define the security filter
+    const whereCondition: Prisma.TaskWhereInput = {
+      id: taskId,
+      isDeleted: false,
+    };
+
+    //if not admin then applying AssignedTo or AssignedBy restriction
+    if (!isAdmin) {
+      whereCondition.OR = [{ assignedToId: userId }, { assignedById: userId }];
+    }
+
+    //Fetch the task
+    const task = await this.prisma.task.findFirst({
+      where: whereCondition,
+      include: {
+        assignedTo: {
+          select: { id: true, name: true, email: true, profilePhoto: true },
+        },
+        assignedBy: {
+          select: { id: true, name: true, email: true, profilePhoto: true },
+        },
+      },
+    });
+
+    //Handle Not Found or Unauthorized
+    if (!task) {
+      const exists = await this.prisma.task.findUnique({
+        where: { id: taskId },
+      });
+
+      if (!exists) {
+        throw new NotFoundException('Task not found');
+      }
+      throw new ForbiddenException(
+        'You do not have permission to view this task',
+      );
+    }
+
+    return task;
+  }
 
   // update(id: number, updateTaskDto: UpdateTaskDto) {
   //   return `This action updates a #${id} task`;

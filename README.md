@@ -7,92 +7,217 @@
 
   <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
     <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
+
+# WORK BOARD SERVER
+
+**WORK BOARD SERVER** - WORK BOARD SERVER is a full-featured backend API for a task management platform. The platform supports user and assigned task management using modern backend technologies.
+
+🌐 **Frontend Live URL:** [https://workboard-client.vercel.app](https://workboard-client.vercel.app)  
+🌐 **Backend Live URL:** [https://workboard-server.vercel.app](https://workboard-server.vercel.app)  
+🌐 **Frontend Github URL:** [https://github.com/mazharul90007/work-board-client](https://github.com/mazharul90007/work-board-client)  
+📚 **API Documentation:** [Postman Documentation](https://documenter.getpostman.com/view/40157327/2sB3dWsnQB)
+
+---
+
+## 🚀 Features
+
+### Post Management
+
+- Create Task
+- Get all Tasks
+- Get a Specific Task by Id
+- Update a Specific Task by Id
+- Delete Task
+
+### User Management
+
+- Create User
+- Get a Single User
+- Get All Users
+- Update User data (name & email)
+- Delete User
+
+---
+
+## 🗂️ Entity Relationship Diagram (ERD)
+
+<p align="center">
+  <img src="https://res.cloudinary.com/dp6urj3gj/image/upload/v1766420684/Screenshot_2025-12-22_at_10.23.28_PM_y7kkgi.png" alt="Workboard ER Diagram" width="700"/>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠 Technology Stack
 
-## Project setup
+### Backend Framework
+
+- **Node.js** - Runtime environment
+- **Express.js** (v5.2.1) - Web framework
+- **TypeScript** - Type-safe JavaScript
+
+### Database
+
+- **PostgreSQL** - Relational database
+- **prisma** - ORM(Object–Relational Mapping) tool
+
+### Validation
+
+- **Zod** - TypeScript-first schema validation library
+
+### Development Tools
+
+- **tsx** (v4.21.0) - TypeScript execution
+- **dotenv** (v17.2.3) - Environment variable management
+
+### Deployment
+
+- **Vercel** - Serverless deployment platform
+
+---
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** (v18 or higher)
+- **npm** or **pnpm** package manager
+- **PostgreSQL** database (local or remote)
+- **Git**
+
+---
+
+## 🔧 Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
-$ pnpm install
+git clone <repository-url>
+cd workboard-server
 ```
 
-## Compile and run the project
+### 2. Install Dependencies
+
+Using npm:
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+npm install
 ```
 
-## Run tests
+Or using pnpm:
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+pnpm install
 ```
 
-## Deployment
+### 3. Environment Configuration
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Create a `.env` file in the root directory with the following variables:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+PORT=5173
+CONNECTION_STR=your postgresql server connection url
+```
+
+**Required Environment Variables:**
+
+- `PORT` - Server port number (default: 5173)
+- `CONNECTION_STR` - PostgreSQL database connection string
+
+### 4. Database Setup
+
+The application automatically initializes the database tables on startup. Ensure your PostgreSQL database is running and accessible.
+
+**Database Tables:**
+
+- `users` - User accounts
+- `tasks` - User assigned tasks
+
+### 5. Build the Project
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+npm run build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+This compiles TypeScript to JavaScript in the `dist` folder.
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🎯 Usage Instructions
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Development Mode
 
-## Support
+Run the server in development mode with hot-reload:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm run dev
+```
 
-## Stay in touch
+The server will start on `http://localhost:5173` (or your configured PORT).
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Production Mode
 
-## License
+1. Build the project:
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```bash
+npm run build
+```
+
+2. Start the server:
+
+```bash
+node dist/src/server.js
+```
+
+### API Base URL ({{base_url}})
+
+- **Development:** `http://localhost:5173/api/v1`
+- **Production:** `https://workboard-server.vercel.app/api/v1`
+
+### API Endpoints
+
+#### Users
+
+- `POST {{base_url}}/user` - Create a User.
+- `GET {{base_url}}/user` - Get all users.
+- `GET {{base_url}}/user/:id` - Get a specific User by his userId.
+- `PATCH {{base_url}}/user/update/:id` - Update user
+- `DELETE {{base_url}}/user/:id` - Delete a User
+
+#### Tasks
+
+- `POST {{base_url}}/task` - Create a task.
+- `GET {{base_url}}/task` - Get all tasks.
+- `GET {{base_url}}/task/:id` - Get a specific task by his taskId.
+- `PATCH {{base_url}}/task/:id` - Update a specific task
+- `DELETE {{base_url}}/task/:id` - Delete a task
+
+---
+
+## 📖 API Documentation
+
+For detailed API documentation, request/response examples, and testing, visit:
+**[Postman Documentation](https://documenter.getpostman.com/view/40157327/2sB3dWsnQB)**
+
+---
+
+## 📝 License
+
+ISC
+
+---
+
+## 👤 Author
+
+Mazharul Islam Sourabh
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+---
+
+## 📞 Support
+
+For support, please visit the [API Documentation](https://documenter.getpostman.com/view/40157327/2sB3dWsnQB) or contact the development team.

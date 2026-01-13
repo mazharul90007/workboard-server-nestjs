@@ -33,7 +33,7 @@
 ### Post Management
 
 - **Create Task** (LEADER, ADMIN, SUPER_ADMIN)
-- **Get all Tasks** (ALL LOGGEDING USER)
+- **Get all Tasks** (ALL LOGGEDIN USER)
 - **Get a Specific Task by Id** (ALL LOGGEDIN USER)
 - **Update a Specific Task by Id** (LEADER, ADMIN & SUPER_ADMIN)
 - **Delete Task** (ADMIN & SUPER_ADMIN)

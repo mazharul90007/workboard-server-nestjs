@@ -28,7 +28,8 @@
 ### Authentication with JWT
 
 - **Create User** (ADMIN & SUPER_ADMIN)
-- **Login** (ONLY REGISTERD USER)
+- **Login** (PUBLIC)
+- **Update Token** (PUBLIC)
 
 ### Post Management
 
@@ -207,6 +208,7 @@ npm run start:prod
 
 - `POST {{base_url}}/auth/signup` - Register a new user (**Admin/SuperAdmin Only**).
 - `POST {{base_url}}/auth/login` - Authenticate and receive JWT tokens.
+- `POST {{base_url}}/auth/refresh-token` - Update access token from Refresh token.
 
 #### 👥 Users
 

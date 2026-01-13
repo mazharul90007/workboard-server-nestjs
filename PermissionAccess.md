@@ -30,6 +30,12 @@ This document provides a detailed breakdown of the Authorization and Access Cont
 - **Access:** `PUBLIC`
 - **Logic:** Requires valid credentials. Returns JWT Access Token and Refresh Token.
 
+### Access Token Refresh
+
+- **Logic**: Synchronous verification of the long-lived Refresh Token.
+- **Validation**: If the token is tampered with or expired, a `401 Unauthorized` is thrown immediately.
+- **Output**: Returns a fresh `accessToken` with a shorter lifespan (typically 1h).
+
 ---
 
 ## 👥 User Management Access

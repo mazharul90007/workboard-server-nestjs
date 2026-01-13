@@ -45,4 +45,17 @@ export class AuthController {
       data: result,
     };
   }
+
+  //==========Get Access Token from Refresh Token==========
+  @Post('/refresh-token')
+  @HttpCode(HttpStatus.OK)
+  refreshToken(@Body('refreshToken') refreshToken: string) {
+    const result = this.authService.refreshAccessToken(refreshToken);
+
+    return {
+      success: true,
+      message: 'Access token refreshed successfully',
+      data: result,
+    };
+  }
 }

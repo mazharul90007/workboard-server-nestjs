@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 // import { UserStatus } from 'src/generated/prisma/enums';
 import { UserStatus } from 'generated/prisma/enums';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtPayload } from './entities/auth.entity';
 
 @Injectable()
 export class AuthService {
@@ -138,5 +139,30 @@ export class AuthService {
         name: user.name,
       },
     };
+  }
+
+  //==========Get Access Token from Refresh Token==========
+  refreshAccessToken(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify<JwtPayload>(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+
+      //extract user from payload
+      const jwtPayload: JwtPayload = {
+        sub: payload.sub,
+        email: payload.email,
+        role: payload.role,
+      };
+
+      //generate new access token
+      const accessToken = this.jwtService.sign(jwtPayload);
+
+      return {
+        accessToken,
+      };
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
 }

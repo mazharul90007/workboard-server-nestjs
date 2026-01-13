@@ -5,7 +5,7 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+  <p align="center">A task management scalable server-side applications.</p>
     <p align="center">
 
 # WORK BOARD SERVER
@@ -51,7 +51,7 @@
 ## 🗂️ Entity Relationship Diagram (ERD)
 
 <p align="center">
-  <img src="https://res.cloudinary.com/dp6urj3gj/image/upload/v1766420684/Screenshot_2025-12-22_at_10.23.28_PM_y7kkgi.png" alt="Workboard ER Diagram" width="700"/>
+  <img src="https://res.cloudinary.com/dp6urj3gj/image/upload/v1768283268/workboard-nest_fasl74.png" alt="Workboard ER Diagram" width="700"/>
 </p>
 
 ---
@@ -61,7 +61,7 @@
 ### Backend Framework
 
 - **Node.js** - Runtime environment
-- **Express.js** (v5.2.1) - Web framework
+- **Nest.js** (v11.0.1) - Web framework
 - **TypeScript** - Type-safe JavaScript
 
 ### Database
@@ -69,9 +69,11 @@
 - **PostgreSQL** - Relational database
 - **prisma** - ORM(Object–Relational Mapping) tool
 
-### Validation
+### Security & Validation
 
-- **Zod** - TypeScript-first schema validation library
+- **Passport.js** - Authentication middleware.
+- **Class-validator** - Decorator-based data validation for all DTOs.
+- **Bcrypt** - Secure password encryption.
 
 ### Development Tools
 
@@ -80,7 +82,7 @@
 
 ### Deployment
 
-- **Vercel** - Serverless deployment platform
+- **Render** - Serverless deployment platform
 
 ---
 
@@ -100,8 +102,8 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd workboard-server
+git clone https://github.com/mazharul90007/workboard-server-nest.git
+cd workboard-server-nest
 ```
 
 ### 2. Install Dependencies
@@ -124,17 +126,32 @@ Create a `.env` file in the root directory with the following variables:
 
 ```env
 PORT=5173
-CONNECTION_STR=your postgresql server connection url
+DATABASE_URL="postgresql://user:password@localhost:5432/workboard"
+JWT_ACCESS_SECRET="your_access_secret"
+JWT_REFRESH_SECRET="your_refresh_secret"
+EXPIRES_IN=1h
 ```
 
 **Required Environment Variables:**
 
 - `PORT` - Server port number (default: 5173)
-- `CONNECTION_STR` - PostgreSQL database connection string
+- `DATABASE_URL` - PostgreSQL database connection string
+- `JWT_ACCESS_SECRET` - Secret to generate access token
+- `JWT_REFRESH_SECRET` - Secret to generate refresh token
 
 ### 4. Database Setup
 
-The application automatically initializes the database tables on startup. Ensure your PostgreSQL database is running and accessible.
+**Generate Prisma Client**
+
+```
+npx prisma generate
+```
+
+**Run Migrations**
+
+```
+npx prisma migrate dev --name init
+```
 
 **Database Tables:**
 
@@ -158,7 +175,7 @@ This compiles TypeScript to JavaScript in the `dist` folder.
 Run the server in development mode with hot-reload:
 
 ```bash
-npm run dev
+npm run start:dev
 ```
 
 The server will start on `http://localhost:5173` (or your configured PORT).
@@ -171,41 +188,45 @@ The server will start on `http://localhost:5173` (or your configured PORT).
 npm run build
 ```
 
-2. Start the server:
+2. Start the compiled server:
 
 ```bash
-node dist/src/server.js
+npm run start:prod
 ```
 
 ### API Base URL ({{base_url}})
 
-- **Development:** `http://localhost:5173/api/v1`
-- **Production:** `https://workboard-server.vercel.app/api/v1`
+- **Development:** `http://localhost:5173`
+- **Production:** `https://workboard-server-nestjs.onrender.com`
 
 ### API Endpoints
 
-#### Users
+#### 🔑 Authentication
 
-- `POST {{base_url}}/user` - Create a User.
-- `GET {{base_url}}/user` - Get all users.
-- `GET {{base_url}}/user/:id` - Get a specific User by his userId.
-- `PATCH {{base_url}}/user/update/:id` - Update user
-- `DELETE {{base_url}}/user/:id` - Delete a User
+- `POST {{base_url}}/auth/signup` - Register a new user (**Admin/SuperAdmin Only**).
+- `POST {{base_url}}/auth/login` - Authenticate and receive JWT tokens.
 
-#### Tasks
+#### 👥 Users
 
-- `POST {{base_url}}/task` - Create a task.
-- `GET {{base_url}}/task` - Get all tasks.
-- `GET {{base_url}}/task/:id` - Get a specific task by his taskId.
-- `PATCH {{base_url}}/task/:id` - Update a specific task
-- `DELETE {{base_url}}/task/:id` - Delete a task
+- `GET {{base_url}}/user` - List all users with filters (**Admin/SuperAdmin Only**).
+- `GET {{base_url}}/user/:id` - Get profile details (Self or Admin)
+- `PATCH {{base_url}}/user/:id` - Update user information
+- `DELETE {{base_url}}/user/:id` - Soft delete a user and clear their tasks
+
+#### 📝 Tasks
+
+- `POST {{base_url}}/task` - Create and assign a new task.
+- `GET {{base_url}}/task` - Get all tasks with pagination and filters.
+- `GET {{base_url}}/task/:id` - Get specific task details.
+- `PATCH {{base_url}}/task/:id` - Update task status or priority.
+- `DELETE {{base_url}}/task/:id` - Permanently remove a task.
 
 ---
 
 ## 📖 API Documentation
 
 For detailed API documentation, request/response examples, and testing, visit:
-**[Postman Documentation](https://documenter.getpostman.com/view/40157327/2sB3dWsnQB)**
+**[Postman Documentation](https://documenter.getpostman.com/view/40157327/2sBXVfkBth)**
 
 ---
 
@@ -223,10 +244,10 @@ Mazharul Islam Sourabh
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!
+Feel free to fork this project and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
 ---
 
 ## 📞 Support
 
-For support, please visit the [API Documentation](https://documenter.getpostman.com/view/40157327/2sB3dWsnQB) or contact the development team.
+For support, please visit the [API Documentation](https://documenter.getpostman.com/view/40157327/2sBXVfkBth) or contact the development team.

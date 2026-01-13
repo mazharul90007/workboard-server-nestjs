@@ -21,21 +21,30 @@
 
 ## 🚀 Features
 
+### Role Based Authorization
+
+[MEMBER, LEADER, ADMIN, SUPER_ADMIN]
+
+### Authentication with JWT
+
+- **Create User** (ADMIN & SUPER_ADMIN)
+- **Login** (ONLY REGISTERD USER)
+
 ### Post Management
 
-- Create Task
-- Get all Tasks
-- Get a Specific Task by Id
-- Update a Specific Task by Id
-- Delete Task
+- **Create Task** (LEADER, ADMIN, SUPER_ADMIN)
+- **Get all Tasks** (ALL LOGGEDING USER)
+- **Get a Specific Task by Id** (ALL LOGGEDIN USER)
+- **Update a Specific Task by Id** (LEADER, ADMIN & SUPER_ADMIN)
+- **Delete Task** (ADMIN & SUPER_ADMIN)
 
 ### User Management
 
-- Create User
-- Get a Single User
-- Get All Users
-- Update User data (name & email)
-- Delete User
+- **Create User** (ADMIN & SUPER_ADMIN)
+- **Get a Single User** (ADMIN & SUPER_ADMIN)
+- **Get All Users** (ADMIN & SUPER_ADMIN)
+- **Update User data** (ADMIN & SUPER_ADMIN)
+- **Delete User** (ADMIN & SUPER_ADMIN)
 
 ---
 

@@ -20,7 +20,6 @@ import { UserFilterDto } from './dto/user-filter.dto';
 import { AuthUser } from './entities/user.entity';
 import { GetUser } from './decorators/get-user.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
-// import * as express from 'express';
 
 @Controller('user')
 export class UserController {

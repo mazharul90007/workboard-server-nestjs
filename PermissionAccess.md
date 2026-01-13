@@ -67,6 +67,14 @@ This document provides a detailed breakdown of the Authorization and Access Cont
 - **Constraint:** Strict admin-only.
 - **Logic:** Uses a Database Transaction. It permanently deletes all tasks where the target user was the assigner or assignee, then sets the user's status to `DELETED`.
 
+### Upload Profile Photo
+
+- **Endpoint:** `PATCH /user/profile-image/:id`
+- **Method:** `multipart/form-data`
+- **Access:** Any logged-in user (MEMBER AND LEADER updates their own profile, ADMIN can update any user profile photo).
+- **Body Key:** `file` (The image file)
+- **Constraints:** Max 5MB, formats: .jpg, .jpeg, .png.
+
 ---
 
 ## 📝 Task Management Access (Detailed Logic)

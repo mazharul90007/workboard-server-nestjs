@@ -46,6 +46,7 @@
 - **Get All Users** (ADMIN & SUPER_ADMIN)
 - **Update User data** (ADMIN & SUPER_ADMIN)
 - **Delete User** (ADMIN & SUPER_ADMIN)
+- **Update User Profile Photo** (ALL LOGGEDIN USER)
 
 ### Permission & Access Controll Documentation : [Click Here](https://github.com/mazharul90007/workboard-server-nestjs/blob/main/PermissionAccess.md)
 
@@ -71,6 +72,10 @@
 
 - **PostgreSQL** - Relational database
 - **prisma** - ORM(Object–Relational Mapping) tool
+
+### Image host
+
+- **Cloudinary** - cloud-based media management service used to upload images
 
 ### Security & Validation
 
@@ -133,14 +138,20 @@ DATABASE_URL="postgresql://user:password@localhost:5432/workboard"
 JWT_ACCESS_SECRET="your_access_secret"
 JWT_REFRESH_SECRET="your_refresh_secret"
 EXPIRES_IN=1h
+CLOUDINARY_NAME=*******
+CLOUDINARY_API_KEY=******
+CLOUDINARY_API_SECRET=*******
 ```
 
 **Required Environment Variables:**
 
 - `PORT` - Server port number (default: 5173)
 - `DATABASE_URL` - PostgreSQL database connection string
-- `JWT_ACCESS_SECRET` - Secret to generate access token
-- `JWT_REFRESH_SECRET` - Secret to generate refresh token
+- `JWT_ACCESS_SECRET` - Secret key used to sign and verify short-lived Access Tokens
+- `JWT_REFRESH_SECRET` - Secret key used to sign and verify long-lived Refresh Tokens
+- `CLOUDINARY_NAME` - The "Cloud Name" found in your Cloudinary dashboard settings
+- `CLOUDINARY_API_KEY` - The 15-digit API Key used for Cloudinary authentication
+- `CLOUDINARY_API_SECRET` - The private API Secret used for signing Cloudinary requests
 
 ### 4. Database Setup
 
@@ -214,8 +225,9 @@ npm run start:prod
 
 - `GET {{base_url}}/user` - List all users with filters (**Admin/SuperAdmin Only**).
 - `GET {{base_url}}/user/:id` - Get profile details (Self or Admin)
-- `PATCH {{base_url}}/user/:id` - Update user information
-- `DELETE {{base_url}}/user/:id` - Soft delete a user and clear their tasks
+- `PATCH {{base_url}}/user/:id` - Update user information.
+- `DELETE {{base_url}}/user/:id` - Soft delete a user and clear their tasks.
+- `PATCH {{base_url}}/user/profile-image/:id` - Update user profile photo.
 
 #### 📝 Tasks
 

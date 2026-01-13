@@ -92,22 +92,33 @@ export class UserController {
     };
   }
 
-  //===================Delete User==================
-  @Patch('profile-image')
+  //===================Update User Profile photo==================
+  @Patch('profile-image/:id')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
   async uploadProfileImage(
+    @Param('id') targetUserId: string,
     @UploadedFile(
       new ParseFilePipe({
         validators: [
-          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 2 }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 }),
           new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
         ],
       }),
     )
     file: Express.Multer.File,
-    @GetUser('id') userId: string,
+    @GetUser() currentUser: AuthUser,
   ) {
-    return await this.userService.updateProfileImage(userId, file);
+    const result = await this.userService.updateProfileImage(
+      targetUserId,
+      file,
+      currentUser,
+    );
+
+    return {
+      success: true,
+      message: 'Your Profile photo has been updated successfully',
+      data: result,
+    };
   }
 }

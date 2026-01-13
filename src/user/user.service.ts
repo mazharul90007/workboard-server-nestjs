@@ -200,14 +200,29 @@ export class UserService {
 
   //==================Update Profile photo==================
 
-  async updateProfileImage(userId: string, file: Express.Multer.File) {
+  async updateProfileImage(
+    targetUserId: string,
+    file: Express.Multer.File,
+    currentUser: AuthUser,
+  ) {
+    //Authorization Logic
+    const isAdmin =
+      currentUser.role === 'ADMIN' || currentUser.role === 'SUPER_ADMIN';
+    const isSelf = currentUser.id === targetUserId;
+
+    if (!isAdmin && !isSelf) {
+      throw new ForbiddenException(
+        'You do not have permission to update this users photo',
+      );
+    }
+
     //Upload new image to Cloudinary
     const uploadResult = await this.cloudinary.uploadImage(file);
     const newImageUrl = uploadResult.secure_url;
 
     //Find current user to check for existing photo
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: targetUserId },
       select: { profilePhoto: true },
     });
 
@@ -228,7 +243,7 @@ export class UserService {
     //Update database with new url
     try {
       return await this.prisma.user.update({
-        where: { id: userId },
+        where: { id: targetUserId },
         data: { profilePhoto: newImageUrl },
         select: {
           id: true,

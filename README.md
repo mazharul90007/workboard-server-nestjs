@@ -46,6 +46,8 @@
 - **Update User data** (ADMIN & SUPER_ADMIN)
 - **Delete User** (ADMIN & SUPER_ADMIN)
 
+**Permission & Access Controll Documentation** : [Click Here](https://github.com/mazharul90007/workboard-server-nestjs/blob/main/PermissionAccess.md)
+
 ---
 
 ## 🗂️ Entity Relationship Diagram (ERD)

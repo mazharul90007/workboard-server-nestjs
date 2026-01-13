@@ -5,7 +5,7 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A task management scalable server-side applications.</p>
+  <p align="center">A task management scalable server-side application.</p>
     <p align="center">
 
 # WORK BOARD SERVER

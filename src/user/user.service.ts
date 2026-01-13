@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -10,10 +11,14 @@ import { Prisma, UserRole, UserStatus } from 'generated/prisma/client';
 import { AuthUser } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private cloudinary: CloudinaryService,
+  ) {}
 
   //==============Get all User==================
   async findAll(query: UserFilterDto) {
@@ -191,5 +196,50 @@ export class UserService {
         deletedTasksCount: deleteTasks.count,
       };
     });
+  }
+
+  //==================Update Profile photo==================
+
+  async updateProfileImage(userId: string, file: Express.Multer.File) {
+    //Upload new image to Cloudinary
+    const uploadResult = await this.cloudinary.uploadImage(file);
+    const newImageUrl = uploadResult.secure_url;
+
+    //Find current user to check for existing photo
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { profilePhoto: true },
+    });
+
+    //Delete old image from cloudinary if it exists
+    if (user?.profilePhoto) {
+      const publicId = this.cloudinary.extractPublicIdFromUrl(
+        user.profilePhoto,
+      );
+      if (publicId) {
+        try {
+          await this.cloudinary.deleteImage(publicId);
+        } catch (error) {
+          console.error('Failed to delete old image from Cloudinary:', error);
+        }
+      }
+    }
+
+    //Update database with new url
+    try {
+      return await this.prisma.user.update({
+        where: { id: userId },
+        data: { profilePhoto: newImageUrl },
+        select: {
+          id: true,
+          profilePhoto: true,
+          email: true,
+        },
+      });
+    } catch {
+      throw new InternalServerErrorException(
+        'Failed to update user profile in database',
+      );
+    }
   }
 }

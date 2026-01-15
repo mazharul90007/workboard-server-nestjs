@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -13,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 import { UserRole } from 'generated/prisma/enums';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -36,13 +38,35 @@ export class AuthController {
   //===================Login User====================
   @Post('/login')
   @HttpCode(HttpStatus.OK)
-  async loginUser(@Body() payload: LoginAuthDto) {
-    const result = await this.authService.loginUser(payload);
+  async loginUser(
+    @Body() payload: LoginAuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { accessToken, refreshToken, user } =
+      await this.authService.loginUser(payload);
+
+    //set accessToken cookie
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000,
+      path: '/',
+    });
+
+    //set refreshToken cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/',
+    });
 
     return {
       success: true,
       message: 'User Login Successful',
-      data: result,
+      data: { user },
     };
   }
 
@@ -56,6 +80,32 @@ export class AuthController {
       success: true,
       message: 'Access token refreshed successfully',
       data: result,
+    };
+  }
+
+  // ================= Logout Endpoint =================
+  @Post('/logout')
+  @HttpCode(HttpStatus.OK)
+  logout(@Res({ passthrough: true }) res: Response) {
+    // Clear Access Token
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    // Clear Refresh Token
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    return {
+      success: true,
+      message: 'Logged out successfully',
     };
   }
 }

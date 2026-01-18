@@ -50,7 +50,8 @@ export class TaskController {
     return {
       success: true,
       message: 'Tasks fetched successfully',
-      data: result,
+      meta: result.meta,
+      data: result.data,
     };
   }
 

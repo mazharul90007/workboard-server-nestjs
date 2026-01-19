@@ -40,10 +40,10 @@ export class TaskService {
       data: taskDataToCreate,
       include: {
         assignedTo: {
-          select: { id: true, name: true, email: true },
+          select: { id: true, name: true, email: true, profilePhoto: true },
         },
         assignedBy: {
-          select: { id: true, name: true, email: true },
+          select: { id: true, name: true, email: true, profilePhoto: true },
         },
       },
     });
@@ -113,10 +113,10 @@ export class TaskService {
         take: l,
         include: {
           assignedTo: {
-            select: { id: true, name: true, email: true },
+            select: { id: true, name: true, email: true, profilePhoto: true },
           },
           assignedBy: {
-            select: { id: true, name: true, email: true },
+            select: { id: true, name: true, email: true, profilePhoto: true },
           },
         },
         orderBy: { createdAt: 'desc' },
@@ -221,8 +221,12 @@ export class TaskService {
       where: { id: taskId },
       data: updateTaskDto,
       include: {
-        assignedTo: { select: { id: true, name: true, email: true } },
-        assignedBy: { select: { id: true, name: true, email: true } },
+        assignedTo: {
+          select: { id: true, name: true, email: true, profilePhoto: true },
+        },
+        assignedBy: {
+          select: { id: true, name: true, email: true, profilePhoto: true },
+        },
       },
     });
     return result;

@@ -142,11 +142,17 @@ export class AuthService {
   }
 
   //==========Get Access Token from Refresh Token==========
-  refreshAccessToken(refreshToken: string) {
+  async refreshAccessToken(refreshToken: string) {
+    // Check if token exists
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token is missing');
+    }
     try {
-      const payload = this.jwtService.verify<JwtPayload>(refreshToken, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      });
+      const payload = await Promise.resolve(
+        this.jwtService.verify<JwtPayload>(refreshToken, {
+          secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        }),
+      );
 
       //extract user from payload
       const jwtPayload: JwtPayload = {

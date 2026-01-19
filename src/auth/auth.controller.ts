@@ -6,6 +6,8 @@ import {
   HttpStatus,
   UseGuards,
   Res,
+  Req,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -14,7 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 import { UserRole } from 'generated/prisma/enums';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -73,13 +75,31 @@ export class AuthController {
   //==========Get Access Token from Refresh Token==========
   @Post('/refresh-token')
   @HttpCode(HttpStatus.OK)
-  refreshToken(@Body('refreshToken') refreshToken: string) {
-    const result = this.authService.refreshAccessToken(refreshToken);
+  async refreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    // Get token from cookie
+    const refreshToken = (req.cookies as Record<string, string | undefined>)?.[
+      'refreshToken'
+    ];
 
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token not found');
+    }
+    const result = await this.authService.refreshAccessToken(refreshToken);
+
+    // Set the NEW access token back into the cookie
+    res.cookie('accessToken', result.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000,
+      path: '/',
+    });
     return {
       success: true,
       message: 'Access token refreshed successfully',
-      data: result,
     };
   }
 

@@ -67,6 +67,7 @@ export class AuthService {
         profilePhoto: true,
         phone: true,
         role: true,
+        status: true,
         createdAt: true,
       },
     });

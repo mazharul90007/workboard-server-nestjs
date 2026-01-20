@@ -56,6 +56,7 @@ export class UserService {
           email: true,
           name: true,
           role: true,
+          status: true,
           profilePhoto: true,
           phone: true,
           createdAt: true,
@@ -69,7 +70,7 @@ export class UserService {
         page: p,
         limit: l,
         total,
-        totalPage: Math.ceil(total / l),
+        totalPages: Math.ceil(total / l),
       },
       data,
     };

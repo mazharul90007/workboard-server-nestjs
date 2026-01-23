@@ -11,7 +11,12 @@ async function bootstrap() {
     origin: ['http://localhost:3000', 'https://workboard-client.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+    ],
   });
   app.useGlobalPipes(
     new ValidationPipe({
@@ -20,6 +25,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  await app.listen(process.env.PORT ?? 5173);
+  await app.listen(process.env.PORT ?? 5173, '0.0.0.0');
 }
 bootstrap();

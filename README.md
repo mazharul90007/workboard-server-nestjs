@@ -31,12 +31,13 @@
 - **Login** (PUBLIC)
 - **Update Token** (PUBLIC)
 
-### Post Management
+### Task Management
 
 - **Create Task** (LEADER, ADMIN, SUPER_ADMIN)
 - **Get all Tasks** (ALL LOGGEDIN USER)
 - **Get a Specific Task by Id** (ALL LOGGEDIN USER)
 - **Update a Specific Task by Id** (LEADER, ADMIN & SUPER_ADMIN)
+- **Update Task Status** (ALL LOGGEDIN USER)
 - **Delete Task** (ADMIN & SUPER_ADMIN)
 
 ### User Management
@@ -234,7 +235,8 @@ npm run start:prod
 - `POST {{base_url}}/task` - Create and assign a new task.
 - `GET {{base_url}}/task` - Get all tasks with pagination and filters.
 - `GET {{base_url}}/task/:id` - Get specific task details.
-- `PATCH {{base_url}}/task/:id` - Update task status or priority.
+- `PATCH {{base_url}}/task/:id` - Update task data.
+- `PATCH {{base_url}}/task/status/:id` - Update task status.
 - `DELETE {{base_url}}/task/:id` - Permanently remove a task.
 
 ---

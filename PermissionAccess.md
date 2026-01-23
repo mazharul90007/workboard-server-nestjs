@@ -106,6 +106,15 @@ This document provides a detailed breakdown of the Authorization and Access Cont
 - **Detailed Constraints:**
   - **ADMIN / SUPER_ADMIN:** Can update **any** task in the system regardless of who created it.
   - **LEADER:** Can only update a task **IF** they are the `assignedBy` (the creator) of that specific task. If a Leader tries to update a task created by an Admin or another Leader, access is denied.
+  - **MEMBER:** Can update only those task status that he is assigned to.
+- **Logic:** If `assignedToId` is changed, the system validates that the new user exists and is active.
+
+### Update Task Status
+
+- **Endpoint:** `PATCH /task/status/:id`
+- **Access:** `Involved Parties` or `Admin`
+- **Detailed Constraints:**
+  - **ADMIN / SUPER_ADMIN / LEADER:** Can update **any** task status in the system regardless of who created it.
   - **MEMBER:** No update permissions.
 - **Logic:** If `assignedToId` is changed, the system validates that the new user exists and is active.
 

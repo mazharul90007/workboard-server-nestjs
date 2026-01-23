@@ -8,6 +8,8 @@ import {
   Param,
   Delete,
   Patch,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -19,6 +21,7 @@ import { AuthUser } from 'src/user/entities/user.entity';
 import { TaskFilterDto } from './dto/task-filter.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { UserRole } from 'generated/prisma/enums';
+import { updateTaskStatusDto } from './dto/update-task-status.dto';
 
 @Controller('task')
 export class TaskController {
@@ -81,6 +84,27 @@ export class TaskController {
     return {
       success: true,
       message: 'Task updated successfully',
+      data: result,
+    };
+  }
+
+  //=============Update Task Status by Id===========
+  @Patch('/status/:id')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.OK)
+  async updateStatus(
+    @Param('id') taskId: string,
+    @Body() updateUserStatus: updateTaskStatusDto,
+    @GetUser() user: AuthUser,
+  ) {
+    const result = await this.taskService.updateTaskStatus(
+      taskId,
+      updateUserStatus,
+      user,
+    );
+    return {
+      success: true,
+      message: 'Task status updated successfully',
       data: result,
     };
   }

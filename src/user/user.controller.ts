@@ -34,7 +34,7 @@ export class UserController {
   //==============Get all User==================
   @Get()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @Roles(UserRole.LEADER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   async findAll(@Query() query: UserFilterDto) {
     const result = await this.userService.findAll(query);

@@ -12,6 +12,7 @@ import { TaskFilterDto } from './dto/task-filter.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { Prisma } from 'generated/prisma/client';
 import { UserRole } from 'generated/prisma/enums';
+import { updateTaskStatusDto } from './dto/update-task-status.dto';
 
 @Injectable()
 export class TaskService {
@@ -220,6 +221,52 @@ export class TaskService {
     const result = await this.prisma.task.update({
       where: { id: taskId },
       data: updateTaskDto,
+      include: {
+        assignedTo: {
+          select: { id: true, name: true, email: true, profilePhoto: true },
+        },
+        assignedBy: {
+          select: { id: true, name: true, email: true, profilePhoto: true },
+        },
+      },
+    });
+    return result;
+  }
+
+  //===============Update Task Status by Id===============
+  async updateTaskStatus(
+    taskId: string,
+    updateTaskStatus: updateTaskStatusDto,
+    user: AuthUser,
+  ) {
+    const { id: userId, role } = user;
+
+    //verify Task
+    const task = await this.prisma.task.findUnique({
+      where: { id: taskId },
+    });
+
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
+
+    //Permission Check
+    const isAdminAccess =
+      role === UserRole.ADMIN ||
+      role === UserRole.SUPER_ADMIN ||
+      role === UserRole.LEADER;
+    const isSelf = task.assignedById === userId || task.assignedToId;
+
+    if (!isAdminAccess && !isSelf) {
+      throw new ForbiddenException(
+        'You do not have permission to update this task',
+      );
+    }
+
+    //Update Task status
+    const result = await this.prisma.task.update({
+      where: { id: taskId },
+      data: updateTaskStatus,
       include: {
         assignedTo: {
           select: { id: true, name: true, email: true, profilePhoto: true },

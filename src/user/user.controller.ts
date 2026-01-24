@@ -48,8 +48,7 @@ export class UserController {
 
   //================Get Single User==================
   @Get(':id')
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string, @GetUser() user: AuthUser) {
     const result = await this.userService.findOne(id, user);

@@ -218,13 +218,13 @@ npm run start:prod
 
 #### 🔑 Authentication
 
-- `POST {{base_url}}/auth/signup` - Register a new user (**Admin/SuperAdmin Only**).
+- `POST {{base_url}}/auth/signup` - Register a new user.
 - `POST {{base_url}}/auth/login` - Authenticate and receive JWT tokens.
 - `POST {{base_url}}/auth/refresh-token` - Update access token from Refresh token.
 
 #### 👥 Users
 
-- `GET {{base_url}}/user` - List all users with filters (**Admin/SuperAdmin Only**).
+- `GET {{base_url}}/user` - List all users with filters.
 - `GET {{base_url}}/user/:id` - Get profile details (Self or Admin)
 - `PATCH {{base_url}}/user/:id` - Update user information.
 - `DELETE {{base_url}}/user/:id` - Soft delete a user and clear their tasks.

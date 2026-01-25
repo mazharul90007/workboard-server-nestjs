@@ -134,7 +134,7 @@ pnpm install
 Create a `.env` file in the root directory with the following variables:
 
 ```env
-PORT=5173
+PORT=4000
 DATABASE_URL="postgresql://user:password@localhost:5432/workboard"
 JWT_ACCESS_SECRET="your_access_secret"
 JWT_REFRESH_SECRET="your_refresh_secret"
@@ -146,7 +146,7 @@ CLOUDINARY_API_SECRET=*******
 
 **Required Environment Variables:**
 
-- `PORT` - Server port number (default: 5173)
+- `PORT` - Server port number (default: 4000)
 - `DATABASE_URL` - PostgreSQL database connection string
 - `JWT_ACCESS_SECRET` - Secret key used to sign and verify short-lived Access Tokens
 - `JWT_REFRESH_SECRET` - Secret key used to sign and verify long-lived Refresh Tokens
@@ -193,7 +193,7 @@ Run the server in development mode with hot-reload:
 npm run start:dev
 ```
 
-The server will start on `http://localhost:5173` (or your configured PORT).
+The server will start on `http://localhost:4000` (or your configured PORT).
 
 ### Production Mode
 
@@ -209,9 +209,28 @@ npm run build
 npm run start:prod
 ```
 
+---
+
+## 🐳 Running with Docker (Recommended)
+
+The fastest way to get **Workboard Server** running is using Docker. This avoids the need to install Node.js or PostgreSQL locally.
+
+### 1. Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
+- A `.env` file configured (see the **Environment Configuration** section above).
+
+### 2. Start the Application
+
+In your terminal, run:
+
+```bash
+docker-compose up --build
+```
+
 ### API Base URL ({{base_url}})
 
-- **Development:** `http://localhost:5173`
+- **Development:** `http://localhost:4000`
 - **Production:** `https://workboard-server-nestjs.onrender.com`
 
 ### API Endpoints
@@ -269,3 +288,7 @@ Feel free to fork this project and submit pull requests. For major changes, plea
 ## 📞 Support
 
 For support, please visit the [API Documentation](https://documenter.getpostman.com/view/40157327/2sBXVfkBth) or contact the development team.
+
+```
+
+```

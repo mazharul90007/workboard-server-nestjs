@@ -199,7 +199,7 @@ export class UserService {
     });
   }
 
-  //==================Update Profile photo==================
+  //==================Update Profile photo================
 
   async updateProfileImage(
     targetUserId: string,

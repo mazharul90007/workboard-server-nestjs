@@ -17,7 +17,14 @@ import { RolesGuard } from './guards/roles.guard';
 import { Roles } from './decorators/roles.decorator';
 import { UserRole } from 'generated/prisma/enums';
 import { Request, Response } from 'express';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Authentication') //This groups these in the UI
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -26,8 +33,12 @@ export class AuthController {
 
   //===================Create User====================
   @Post('/signup')
+  @ApiBearerAuth() //This shows a lock icon in the UI
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Register a new user (Admin only)' })
+  @ApiResponse({ status: 201, description: 'User registered successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Requires Admin role' })
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() payload: CreateAuthDto) {
     const result = await this.authService.create(payload);
@@ -41,6 +52,9 @@ export class AuthController {
 
   //===================Login User====================
   @Post('/login')
+  @ApiOperation({ summary: 'Login user and set cookies' })
+  @ApiResponse({ status: 200, description: 'Login Successful, cookies set' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
   @HttpCode(HttpStatus.OK)
   async loginUser(
     @Body() payload: LoginAuthDto,

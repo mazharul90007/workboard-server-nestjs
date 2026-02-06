@@ -44,6 +44,7 @@ async function bootstrap() {
 
   //Setup the UI path
   SwaggerModule.setup('api', app, document);
+
   await app.listen(process.env.PORT ?? 4000, '0.0.0.0');
 }
 bootstrap();

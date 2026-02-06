@@ -19,22 +19,37 @@ import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-// import { UserRole } from 'src/generated/prisma/enums';
 import { UserRole } from 'generated/prisma/enums';
 import { UserFilterDto } from './dto/user-filter.dto';
 import { AuthUser } from './entities/user.entity';
 import { GetUser } from './decorators/get-user.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('User Management')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   //==============Get all User==================
   @Get()
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.LEADER, UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiOperation({
+    summary:
+      'Get all users with filtering and pagination (admin and leader only)',
+  })
+  @ApiResponse({ status: 200, description: 'Users fetched successfully' })
   @HttpCode(HttpStatus.OK)
   async findAll(@Query() query: UserFilterDto) {
     const result = await this.userService.findAll(query);
@@ -48,7 +63,15 @@ export class UserController {
 
   //================Get Single User==================
   @Get(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Get a single user by ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'The unique UUID of the user',
+    example: '550e8400-e29b-41d4-a716-446655440000',
+  })
+  @ApiResponse({ status: 200, description: 'User data fetched successfully' })
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string, @GetUser() user: AuthUser) {
     const result = await this.userService.findOne(id, user);
@@ -62,7 +85,11 @@ export class UserController {
 
   //===================Update User==================
   @Patch(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @ApiOperation({ summary: 'Update user information' })
+  @ApiParam({ name: 'id', description: 'The UUID of the user to update' })
+  @ApiResponse({ status: 200, description: 'User data updated successfully' })
   @HttpCode(HttpStatus.OK)
   async update(@Param('id') id: string, @Body() updateUserData: UpdateUserDto) {
     const result = await this.userService.update(id, updateUserData);
@@ -76,8 +103,13 @@ export class UserController {
 
   //===================Delete User==================
   @Delete(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+  @ApiOperation({ summary: 'Soft delete a user account (Admin only)' })
+  @ApiResponse({ status: 200, description: 'User soft deleted successfully' })
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'id', description: 'The UUID of the user to delete' })
   async removeUser(
     @Param('id') targetId: string,
     @GetUser('role') role: UserRole,
@@ -93,8 +125,23 @@ export class UserController {
 
   //===================Update User Profile photo==================
   @Patch('profile-image/:id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload and update user profile image' })
+  @ApiBody({
+    description: 'Image file (png, jpeg, jpg)',
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   async uploadProfileImage(
     @Param('id') targetUserId: string,
     @UploadedFile(

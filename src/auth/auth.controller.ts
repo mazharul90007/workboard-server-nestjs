@@ -121,6 +121,7 @@ export class AuthController {
 
   // ================= Logout Endpoint =================
   @Post('/logout')
+  @ApiOperation({ summary: 'Logout user from system and clear token' })
   @HttpCode(HttpStatus.OK)
   logout(@Res({ passthrough: true }) res: Response) {
     // Clear Access Token

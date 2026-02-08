@@ -145,7 +145,7 @@ describe('AuthService - Unit Tests', () => {
     });
 
     it('should throw ConflictException when user already exists and is ACTIVE', async () => {
-      // ARRANGE
+      // ARRANGE: Setup existing active user
       const existingUser = {
         id: 'uuid-123',
         email: 'test@example.com',
@@ -153,22 +153,21 @@ describe('AuthService - Unit Tests', () => {
       };
       mockPrismaService.user.findUnique.mockResolvedValue(existingUser);
 
-      // ACT & ASSERT
+      // ACT & ASSERT: Expect the service to throw an error
       await expect(service.create(createDto)).rejects.toThrow(
         ConflictException,
       );
+
+      // Also check the error message
       await expect(service.create(createDto)).rejects.toThrow(
         'User with this email already exist',
       );
 
-      // ASSERT PHASE: Verify everything happened correctly
-
-      //Assertion 1: Verify findUnique was called with correct email
-
-      // Verify create was NOT called
+      // Additional assertion: create should NOT be called
       expect(mockPrismaService.user.create).not.toHaveBeenCalled();
     });
 
+    // ==================== TEST 2: USER ALREADY EXISTS (ACTIVE) ====================
     it('should reactivate DELETED user', async () => {
       // ARRANGE
       const deletedUser = {
@@ -208,7 +207,7 @@ describe('AuthService - Unit Tests', () => {
     });
   });
 
-  // ============================ Test 2: loginUser() method ====================
+  // ==================== NESTED TEST SUITE FOR loginUser() METHOD ====================
   describe('loginUser() method', () => {
     const loginDto: LoginAuthDto = {
       email: 'test@example.com',

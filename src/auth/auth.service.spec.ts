@@ -318,7 +318,7 @@ describe('AuthService - Unit Tests', () => {
     });
   });
 
-  // ============================ Test 3: refreshAccessToken() method ====================
+  // ============================ Test 3: refreshAccessToken() method =====================
   describe('refreshAccessToken() method', () => {
     const validRefreshToken = 'valid.refresh.token';
     const invalidRefreshToken = 'invalid.token';
